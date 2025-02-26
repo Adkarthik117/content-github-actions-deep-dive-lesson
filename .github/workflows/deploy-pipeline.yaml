@@ -52,28 +52,25 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
       - name: Download artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4  # Updated from v2 to v4
         with:
           name: zipped-bundle
+          path: .  # Ensure artifact is downloaded to the correct directory
       - name: Create release
         id: create_release
-        uses: actions/create-release@v1  # Fixed version from v4 to v1
+        uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Corrected casing
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.run_number }}
           release_name: Release ${{ github.run_number }}
           body: New release for commit ${{ github.sha }}. Check release notes in the docs.
           draft: false
           prerelease: false
-      - name: Download artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: zipped-bundle
       - name: Upload release asset
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.github_token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./${{ github.sha }}.zip
